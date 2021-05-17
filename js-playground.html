@@ -1,37 +1,13 @@
 <html>
+  <meta charset="utf-8"/>
   <head>
     <link rel="stylesheet" href="js-playground.css">
     <link rel="icon" href="data:;base64,=">
   </head>
   <body>
-    <div>
-      <div class="input-data">
-        <input type="button" class="add-csv-file" value="add csv-file">
-        <input type="button" class="del-last" value="del last">
-      </div>
-      <textarea id="code-text" style="width:400pt; height:150pt;">let v0 = 0;
-console.log("now v0=" + v0);
-</textarea>
-    </div>
-    <div>
-      <div class="output-data">
-        <input type="button" class="add-var-get" value="add var">
-        <input type="button" class="del-last" value="del last">
-        <div class="data-item var-name-value-get">
-          <input type="text" style="width: 60pt;" value="v0"/>=<span style="width:120pt;"></span>
-        </div>
-      </div>
-      <input id="exec" type="button" value="exec">
-      break if in debugger<input id="break-before-exec" type="checkbox">
-      <input id="take-snapshot" type="button" value="take snapshot">
-      <input id="clear-snapshots" type="button" value="clear snapshots">
-      <select id="revert-snapshot"></select>
-      <input id="download" type="button" value="download">
-      <a id="download-anchor" href="" style="display: none;">Download</a>
-    </div>
-    <div>
-      <input id="mark-space" type="button" value="emphasize space">
-    </div>
+    <input type="file" id="add-json-file" value="add json-file"/>
+    <input type="text" id="query-string"/>
+    <div><dl id="output-data"></dl></div>
     <script type="text/javascript" src="handle.js"></script>
   </body>
 </html>
