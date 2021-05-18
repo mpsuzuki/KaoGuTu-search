@@ -35,8 +35,8 @@
   document.getElementById("query-string")
           .addEventListener("change",function(){
             var elmOutData = document.getElementById("output-data");
-            while (elmOutData.children.length > 0) {
-               elmOutData.removeChild(elmOutData.children[elm.OutData.length - 1]);
+            for (var i = elmOutData.childNodes.length; i > 0; i --) {
+               elmOutData.removeChild(elmOutData.childNodes[i-1]);
             };
 
             var re = RegExp( document.getElementById("query-string").value  );
