@@ -34,6 +34,10 @@
 
   document.getElementById("query-string")
           .addEventListener("change",function(){
+            var funcOpenNewWindow = function(evt) {
+              window.open(evt.target.href);
+              evt.preventDefault();
+            };
             var elmOutData = document.getElementById("output-data");
             for (var i = elmOutData.childNodes.length; i > 0; i --) {
                elmOutData.removeChild(elmOutData.childNodes[i-1]);
@@ -41,13 +45,38 @@
 
             var re = RegExp( document.getElementById("query-string").value  );
             Object.keys(jsLoaded)
-                  .filter(function(k){ return re.test(k) || re.test(jsLoaded[k]) })
                   .forEach(function(k){
-                    var elmDT = document.createElement("dt");
-                    var elmDD = document.createElement("dd");
-                    elmDT.appendChild( document.createTextNode(k) );
-                    elmDD.appendChild( document.createTextNode(jsLoaded[k]) );
-                    elmOutData.appendChild(elmDT);
-                    elmOutData.appendChild(elmDD);
+                    var v = jsLoaded[k];
+                    var isString = ( typeof(v) == "string" );
+                    var isObject = ( typeof(v) == "object" );
+                    var isArray = ( typeof(v) == "array" );
+                    var show = false;
+                    if (re.test(k)) {
+                      show = true;
+                    } else
+                    if (isString && re.test(v)) {
+                      show = true;
+                    } else
+                    if (isObject && re.test(v["text"])) {
+                      show = true;
+                    };
+
+                    if (show) {
+                      var elmDT = document.createElement("dt");
+                      var elmDD = document.createElement("dd");
+                      elmDT.appendChild( document.createTextNode(k) );
+                      if (isObject) {
+                        var elmA = document.createElement("a");
+                        elmA.appendChild( document.createTextNode(v["text"]) );
+                        elmA.setAttribute("href", v["href"]);
+                        elmA.addEventListener("click", funcOpenNewWindow);
+                        elmDD.appendChild(elmA); 
+                      } else
+                      if (isString) {
+                        elmDD.appendChild( document.createTextNode(v) );
+                      };
+                      elmOutData.appendChild(elmDT);
+                      elmOutData.appendChild(elmDD);
+                    };
                   });
   });
