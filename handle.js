@@ -32,6 +32,51 @@
              });
     });
 
+  var enqueXHR = function(varName, jsUrl) {
+    var promise = new Promise(function(fnResolve, fnReject) {
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function(evt) {
+        if (this.readyState == 4 && (this.status == 200 || this.status == 0)) {
+          var jsData = JSON.parse(this.responseText);
+          Object.keys(jsData)
+                .forEach(function(k){
+                  varName[k] = jsData[k];
+                });
+          fnResolve(jsUrl);
+        } else {
+          fnReject();
+        };
+      };
+      xhr.onerror = fnReject;
+      xhr.open("GET", jsUrl, true);
+      xhr.send();
+    });
+    return promise;
+  };
+
+  Config = {};
+  document.getElementById("add-json-file").disabled = true;
+  enqueXHR(Config, "config.json").then(function(){
+    var subConfigPromises = [];
+    Object.keys(Config)
+          .forEach(function(jsUrl){
+            var promise;
+            var destName = Config[jsUrl];
+            if (destName != "" && destName != null && destName != undefined) {
+              promise = enqueXHR(jsLoaded[destName], jsUrl);
+            } else {
+              promise = enqueXHR(jsLoaded, jsUrl);
+            };
+            subConfigPromises.push(promise);
+          });
+    Promise.all(subConfigPromises)
+           .then(function(){
+             document.getElementById("add-json-file").disabled = false;
+             document.getElementById("query-string").disabled = false;
+           });
+  });
+
+
   document.getElementById("query-string")
           .addEventListener("change",function(){
             var funcOpenNewWindow = function(evt) {
