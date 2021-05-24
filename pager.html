@@ -9,21 +9,21 @@
       color: red;
     }
     *.button-mark {
-      font-size: 36px;
+      font-size: 18px;
     }
   </style>
   </head>
   <body>
     <div>
-      <span class="button-mark prev">&lt;</span>
+      <input type="button" class="button-mark prev" value="prev<"/>
       <span class="img-url"></span>
-      <span class="button-mark next">&gt;</span>
+      <input type="button" class="button-mark next" value=">next"/>
     </div>
     <img id="wikisource-img"/>
     <div>
-      <span class="button-mark prev">&lt;</span>
+      <input type="button" class="button-mark prev" value="prev<"/>
       <span class="img-url"></span>
-      <span class="button-mark next">&gt;</span>
+      <input type="button" class="button-mark next" value=">next"/>
     </div>
     <script>
   var enqueXHR = function(varName, jsUrl) {
@@ -90,11 +90,11 @@
     console.log(newURL);
     window.location.href = newURL;
   };
-  var elmSPANs_next = document.querySelectorAll("span.button-mark.next");
+  var elmSPANs_next = document.querySelectorAll("*.button-mark.next");
   for (var i = 0; i < elmSPANs_next.length; i++) {
     elmSPANs_next[i].addEventListener("click", function(){ movePage(+1); });
   };
-  var elmSPANs_prev = document.querySelectorAll("span.button-mark.prev");
+  var elmSPANs_prev = document.querySelectorAll("*.button-mark.prev");
   for (var i = 0; i < elmSPANs_prev.length; i++) {
     elmSPANs_prev[i].addEventListener("click", function(){ movePage(-1); });
   };
