@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <title>
+      Wikimedia Paged Image Viewer
+    </title>
+    <script>
+  var enqueXHR = function(varName, jsUrl) {
+    var promise = new Promise(function(fnResolve, fnReject) {
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function(evt) {
+        if (this.readyState == 4 && (this.status == 200 || this.status == 0)) {
+          var jsData = JSON.parse(this.responseText);
+          Object.keys(jsData)
+                .forEach(function(k){
+                  varName[k] = jsData[k];
+                });
+          fnResolve(jsUrl);
+        } else {
+          fnReject();
+        };
+      };
+      xhr.onerror = fnReject;
+      xhr.open("GET", jsUrl, true);
+      xhr.send();
+    });
+    return promise;
+  };
+
+
+  Config = {};
+  enqueXHR(Config, "pager-config.json").then(
+    function() {
+      var searchObj = {};
+      document.location
+              .search
+              .substr(1)
+              .split("&")
+              .forEach(function(arg){
+                var posEq = arg.indexOf("=");
+                if (posEq < 0) {
+                  searchObj[arg] = true;
+                } else {
+                  var k = arg.substr(0,posEq);
+                  var v = arg.substr(posEq + 1);
+                  if (/^[\-\+]?\d+$/.test(v)) {
+                    searchObj[k] = parseInt(v);
+                  } else
+                  if (/^[\-\+]?(\d+|\d+\.\d+|\.\d+)$/.test(v)) {
+                    searchObj[k] = parseFloat(v);
+                  } else {
+                    searchObj[k] = v;
+                  };
+                };
+              });
+      var elmIMG = document.getElementById("wikisource-img");
+      var url = Config.img_prefix + searchObj["page"].toString() + Config.img_postfix;
+      var elmDIVs = document.getElementsByClassName("img-url");
+      for (var i = 0; i < elmDIVs.length; i++) {
+        elmDIVs[i].innerText = decodeURI(url);
+      };
+      elmIMG.setAttribute("src", Config.img_prefix + searchObj["page"].toString() + Config.img_postfix);
+      elmIMG.setAttribute("width", document.body.clientWidth - 100);
+  });
+  </script>
+  <style>
+    div.img-url {
+      font-size: 18px;
+      color: red;
+    }
+  </style>
+  </head>
+  <body>
+    <div class="img-url"></div>
+    <img id="wikisource-img"/>
+    <div class="img-url"></div>
+  </body>
+</html>
