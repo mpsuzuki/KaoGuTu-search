@@ -113,7 +113,9 @@
                       if (isObject) {
                         var elmA = document.createElement("a");
                         elmA.appendChild( document.createTextNode(v["text"]) );
-                        elmA.setAttribute("href", v["href"]);
+                        // elmA.setAttribute("href", v["href"]);
+                        var pageStr = v["href"].split(".djvu/page",2)[1].split("-")[0];
+                        elmA.setAttribute("href", "pager.html?page=" + pageStr);
                         elmA.addEventListener("click", funcOpenNewWindow);
                         elmDD.appendChild(elmA); 
                       } else
