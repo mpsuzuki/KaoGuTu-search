@@ -3,6 +3,28 @@
     <title>
       Wikimedia Paged Image Viewer
     </title>
+  <style>
+    *.img-url {
+      font-size: 18px;
+      color: red;
+    }
+    *.button-mark {
+      font-size: 36px;
+    }
+  </style>
+  </head>
+  <body>
+    <div>
+      <span class="button-mark prev">&lt;</span>
+      <span class="img-url"></span>
+      <span class="button-mark next">&gt;</span>
+    </div>
+    <img id="wikisource-img"/>
+    <div>
+      <span class="button-mark prev">&lt;</span>
+      <span class="img-url"></span>
+      <span class="button-mark next">&gt;</span>
+    </div>
     <script>
   var enqueXHR = function(varName, jsUrl) {
     var promise = new Promise(function(fnResolve, fnReject) {
@@ -28,9 +50,10 @@
 
 
   Config = {};
+  SearchObj = {};
+  var elmDIVs = document.getElementsByClassName("img-url");
   enqueXHR(Config, "pager-config.json").then(
     function() {
-      var searchObj = {};
       document.location
               .search
               .substr(1)
@@ -38,40 +61,44 @@
               .forEach(function(arg){
                 var posEq = arg.indexOf("=");
                 if (posEq < 0) {
-                  searchObj[arg] = true;
+                  SearchObj[arg] = true;
                 } else {
                   var k = arg.substr(0,posEq);
                   var v = arg.substr(posEq + 1);
                   if (/^[\-\+]?\d+$/.test(v)) {
-                    searchObj[k] = parseInt(v);
+                    SearchObj[k] = parseInt(v);
                   } else
                   if (/^[\-\+]?(\d+|\d+\.\d+|\.\d+)$/.test(v)) {
-                    searchObj[k] = parseFloat(v);
+                    SearchObj[k] = parseFloat(v);
                   } else {
-                    searchObj[k] = v;
+                    SearchObj[k] = v;
                   };
                 };
               });
       var elmIMG = document.getElementById("wikisource-img");
-      var url = Config.img_prefix + searchObj["page"].toString() + Config.img_postfix;
-      var elmDIVs = document.getElementsByClassName("img-url");
+      var url = Config.img_prefix + SearchObj["page"].toString() + Config.img_postfix;
       for (var i = 0; i < elmDIVs.length; i++) {
         elmDIVs[i].innerText = decodeURI(url);
       };
-      elmIMG.setAttribute("src", Config.img_prefix + searchObj["page"].toString() + Config.img_postfix);
+      elmIMG.setAttribute("src", Config.img_prefix + SearchObj["page"].toString() + Config.img_postfix);
       elmIMG.setAttribute("width", document.body.clientWidth - 100);
   });
+
+  var movePage = function(diffPage){
+    SearchObj["page"] += diffPage;
+    var newURL = document.location.origin + document.location.pathname + "?page=" + SearchObj["page"].toString();
+    console.log(newURL);
+    window.location.href = newURL;
+  };
+  var elmSPANs_next = document.querySelectorAll("span.button-mark.next");
+  for (var i = 0; i < elmSPANs_next.length; i++) {
+    elmSPANs_next[i].addEventListener("click", function(){ movePage(+1); });
+  };
+  var elmSPANs_prev = document.querySelectorAll("span.button-mark.prev");
+  for (var i = 0; i < elmSPANs_prev.length; i++) {
+    elmSPANs_prev[i].addEventListener("click", function(){ movePage(-1); });
+  };
+
   </script>
-  <style>
-    div.img-url {
-      font-size: 18px;
-      color: red;
-    }
-  </style>
-  </head>
-  <body>
-    <div class="img-url"></div>
-    <img id="wikisource-img"/>
-    <div class="img-url"></div>
   </body>
 </html>
