@@ -90,6 +90,7 @@
 
             var re = RegExp( document.getElementById("query-string").value  );
             Object.keys(jsLoaded)
+                  .sort()
                   .forEach(function(k){
                     var v = jsLoaded[k];
                     var isString = ( typeof(v) == "string" );
